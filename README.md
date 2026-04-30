@@ -335,5 +335,6 @@ After tag push, GitHub Actions will build and publish the release automatically.
 ## License
 
 Add your preferred license file before public release.
-#   b a t c h - v i d e o - r e s i z e r  
+#   b a t c h - v i d e o - r e s i z e r 
+ 
  

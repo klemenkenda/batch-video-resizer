@@ -1,0 +1,27 @@
+# Python cache and virtual env artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.venv/
+venv/
+env/
+
+# Packaging/build artifacts
+build/
+dist/
+*.spec
+
+# Logs
+*.log
+
+# Local media and generated videos
+videos/
+*.mp4
+
+# Optional IDE/system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
