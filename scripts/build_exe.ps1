@@ -20,6 +20,6 @@ if (Test-Path .\dist) { Remove-Item .\dist -Recurse -Force }
 if (Test-Path ".\$AppName.spec") { Remove-Item ".\$AppName.spec" -Force }
 
 Write-Host "[4/4] Building EXE via PyInstaller..."
-& pyinstaller --noconfirm --clean --windowed --name $AppName --icon .\assets\app.ico .\main.py
+& pyinstaller --noconfirm --clean --windowed --name $AppName --icon .\assets\app.ico --collect-all cv2 .\main.py
 
 Write-Host "Build completed: .\dist\$AppName\$AppName.exe"

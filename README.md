@@ -9,6 +9,8 @@ Batch video conversion tool with:
 - Optional second pass to replace originals
 - Metadata marking to detect already processed files
 
+Runtime dependencies include FFmpeg tooling plus Python package `opencv-python` (cv2), which is bundled into the Windows EXE/installer builds.
+
 ## Windows v1.0.0 Download
 
 - Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.0
