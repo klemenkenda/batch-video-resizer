@@ -11,11 +11,11 @@ Batch video conversion tool with:
 
 Runtime dependencies include FFmpeg tooling plus Python package `opencv-python` (cv2), which is bundled into the Windows EXE/installer builds.
 
-## Windows v1.0.0 Download
+## Windows v1.0.1 Download
 
-- Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.0
-- Windows installer (.exe): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.0/VideoResizerStudio-Setup-v1.0.0.exe
-- Portable build (.zip): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.0/VideoResizerStudio-v1.0.0-win64.zip
+- Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.1
+- Windows installer (.exe): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.1/VideoResizerStudio-Setup-v1.0.1.exe
+- Portable build (.zip): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.1/VideoResizerStudio-v1.0.1-win64.zip
 
 ## What This Project Does
 
