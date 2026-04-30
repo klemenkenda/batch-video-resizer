@@ -1,6 +1,7 @@
 ﻿# Video Resizer Studio
 
 Batch video conversion tool with:
+- Reducing size of video files to ~8-10% of original size
 - GUI and CLI modes
 - Resolution-aware resizing (including portrait handling)
 - Real-time progress reporting
@@ -14,6 +15,8 @@ The tool is especially useful for resizing large video collections to fit within
 Runtime dependencies include FFmpeg tooling plus Python package `opencv-python` (cv2), which is bundled into the Windows EXE/installer builds.
 
 ## Windows Download
+
+GUI versions are available for Windows 10/11 on the GitHub releases page:
 
 - Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.4
 - Windows installer (.exe): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.4/VideoResizerStudio-Setup-v1.0.4.exe
