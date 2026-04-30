@@ -9,6 +9,8 @@ Batch video conversion tool with:
 - Optional second pass to replace originals
 - Metadata marking to detect already processed files
 
+The tool is especially useful for resizing large video collections to fit within specific resolution bounds (e.g. 720p) while preserving quality and aspect ratio, where video quality is less important than file size and compatibility. Examples include resizing smartphone videos for easier sharing or archiving (such as west coast swing classes and comps videos).
+
 Runtime dependencies include FFmpeg tooling plus Python package `opencv-python` (cv2), which is bundled into the Windows EXE/installer builds.
 
 ## Windows v1.0.1 Download
