@@ -14,6 +14,8 @@ The tool is especially useful for resizing large video collections to fit within
 
 Runtime dependencies include FFmpeg tooling plus Python package `opencv-python` (cv2), which is bundled into the Windows EXE/installer builds.
 
+![Video Resizer Studio GUI](assets/screenshot.png)
+
 ## Windows Download
 
 GUI versions are available for Windows 10/11 on the GitHub releases page:
