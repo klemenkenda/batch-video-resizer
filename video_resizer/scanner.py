@@ -1,9 +1,7 @@
 import os
 from typing import List
 
-import ffmpeg
-
-from .estimator import _resolve_ffprobe_cmd
+from .estimator import _probe_json
 
 VIDEO_EXTENSIONS = {".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm"}
 PROCESSED_TAG_KEY = "video_resizer_processed"
@@ -11,9 +9,8 @@ PROCESSED_TAG_VALUE = "1"
 
 
 def _has_processed_marker(path: str) -> bool:
-    try:
-        probe = ffmpeg.probe(path, cmd=_resolve_ffprobe_cmd())
-    except ffmpeg.Error:
+    probe = _probe_json(path)
+    if probe is None:
         return False
 
     tags = (probe.get("format") or {}).get("tags") or {}

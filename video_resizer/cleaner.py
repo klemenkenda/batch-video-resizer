@@ -4,9 +4,7 @@ import time
 from dataclasses import dataclass, field
 from typing import List
 
-import ffmpeg
-
-from .estimator import output_path, _resolve_ffprobe_cmd
+from .estimator import output_path, _probe_json
 from .logger import get_logger
 
 
@@ -31,9 +29,8 @@ def _is_healthy(resized_path: str) -> bool:
         return False
     if os.path.getsize(resized_path) == 0:
         return False
-    try:
-        probe = ffmpeg.probe(resized_path, cmd=_resolve_ffprobe_cmd())
-    except ffmpeg.Error:
+    probe = _probe_json(resized_path)
+    if probe is None:
         return False
     return any(
         s.get("codec_type") == "video" for s in probe.get("streams", [])

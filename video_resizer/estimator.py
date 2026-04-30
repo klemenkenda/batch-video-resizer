@@ -1,12 +1,15 @@
 import os
+import json
 import shutil
 import subprocess
 from glob import glob
 from dataclasses import dataclass
 from typing import Tuple
 
-import cv2
-import ffmpeg
+try:
+    import cv2 as _cv2
+except ImportError:
+    _cv2 = None
 
 
 @dataclass
@@ -85,6 +88,7 @@ def _resolve_ffprobe_cmd() -> str:
                 stderr=subprocess.DEVNULL,
                 timeout=5,
                 check=False,
+                **_hidden_subprocess_kwargs(),
             )
             if completed.returncode == 0:
                 return candidate
@@ -94,14 +98,57 @@ def _resolve_ffprobe_cmd() -> str:
     return "ffprobe"
 
 
+def _hidden_subprocess_kwargs() -> dict:
+    """Return Windows-only subprocess flags that suppress console windows."""
+    if os.name != "nt":
+        return {}
+
+    kwargs = {}
+    create_no_window = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    if create_no_window:
+        kwargs["creationflags"] = create_no_window
+
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    kwargs["startupinfo"] = startupinfo
+    return kwargs
+
+
+def _probe_json(path: str) -> dict | None:
+    """Probe media via ffprobe JSON output without showing a console window."""
+    ffprobe_cmd = _resolve_ffprobe_cmd()
+    try:
+        completed = subprocess.run(
+            [
+                ffprobe_cmd,
+                "-v",
+                "error",
+                "-show_format",
+                "-show_streams",
+                "-of",
+                "json",
+                path,
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            **_hidden_subprocess_kwargs(),
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+    if completed.returncode != 0:
+        return None
+
+    try:
+        return json.loads(completed.stdout or "{}")
+    except json.JSONDecodeError:
+        return None
+
+
 def estimate(path: str, target_w: int = 1280, target_h: int = 720) -> VideoInfo:
     """Probe *path* with ffprobe and return a :class:`VideoInfo` estimate."""
-    probe = None
-    try:
-        probe = ffmpeg.probe(path, cmd=_resolve_ffprobe_cmd())
-    except ffmpeg.Error:
-        # Fallback for environments where ffprobe binary is unavailable/broken.
-        probe = None
+    probe = _probe_json(path)
 
     if probe is not None:
         # Locate the first video stream.
@@ -131,14 +178,16 @@ def estimate(path: str, target_w: int = 1280, target_h: int = 720) -> VideoInfo:
         except (TypeError, ValueError):
             bitrate = 0
     else:
-        cap = cv2.VideoCapture(path)
+        if _cv2 is None:
+            raise RuntimeError(f"ffprobe failed and OpenCV (cv2) is not available for '{path}'")
+        cap = _cv2.VideoCapture(path)
         if not cap.isOpened():
             raise RuntimeError(f"ffprobe failed and OpenCV could not open '{path}'")
 
-        orig_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) or 0)
-        orig_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
-        fps = float(cap.get(cv2.CAP_PROP_FPS) or 0.0)
-        frames = float(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0.0)
+        orig_w = int(cap.get(_cv2.CAP_PROP_FRAME_WIDTH) or 0)
+        orig_h = int(cap.get(_cv2.CAP_PROP_FRAME_HEIGHT) or 0)
+        fps = float(cap.get(_cv2.CAP_PROP_FPS) or 0.0)
+        frames = float(cap.get(_cv2.CAP_PROP_FRAME_COUNT) or 0.0)
         cap.release()
 
         if orig_w <= 0 or orig_h <= 0:

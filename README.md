@@ -13,11 +13,11 @@ The tool is especially useful for resizing large video collections to fit within
 
 Runtime dependencies include FFmpeg tooling plus Python package `opencv-python` (cv2), which is bundled into the Windows EXE/installer builds.
 
-## Windows v1.0.2 Download
+## Windows Download
 
-- Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.2
-- Windows installer (.exe): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.2/VideoResizerStudio-Setup-v1.0.2.exe
-- Portable build (.zip): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.2/VideoResizerStudio-v1.0.2-win64.zip
+- Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.3
+- Windows installer (.exe): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.3/VideoResizerStudio-Setup-v1.0.3.exe
+- Portable build (.zip): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.3/VideoResizerStudio-v1.0.3-win64.zip
 
 ## What This Project Does
 

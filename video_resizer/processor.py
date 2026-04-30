@@ -11,7 +11,7 @@ _TIME_RE = re.compile(r"time=(\d+):(\d+):(\d+\.\d+)")
 _FPS_RE = re.compile(r"fps=\s*([\d.]+)")
 _SPEED_RE = re.compile(r"speed=\s*([\d.]+x)")
 
-from .estimator import VideoInfo, output_path, _resolve_ffprobe_cmd
+from .estimator import VideoInfo, output_path, _probe_json, _hidden_subprocess_kwargs
 from .logger import get_logger
 from .scanner import PROCESSED_TAG_KEY, PROCESSED_TAG_VALUE
 
@@ -25,7 +25,9 @@ def _safe_float(value, default: float = 0.0) -> float:
 
 def _probe_media_summary(path: str) -> dict:
     """Return essential stream/duration info for consistency checks."""
-    probe = ffmpeg.probe(path, cmd=_resolve_ffprobe_cmd())
+    probe = _probe_json(path)
+    if probe is None:
+        raise RuntimeError(f"ffprobe failed for '{path}'")
     streams = probe.get("streams", [])
     video_streams = [s for s in streams if s.get("codec_type") == "video"]
     audio_streams = [s for s in streams if s.get("codec_type") == "audio"]
@@ -74,9 +76,8 @@ def _consistency_report(src_path: str, out_path: str) -> dict:
 
 def _has_audio_stream(path: str) -> bool:
     """Return True if the input file contains at least one audio stream."""
-    try:
-        probe = ffmpeg.probe(path, cmd=_resolve_ffprobe_cmd())
-    except ffmpeg.Error:
+    probe = _probe_json(path)
+    if probe is None:
         # If probing fails, keep audio path enabled to avoid silent regressions.
         return True
 
@@ -124,6 +125,7 @@ def _resolve_ffmpeg_cmd() -> str:
                 stderr=subprocess.DEVNULL,
                 timeout=5,
                 check=False,
+                **_hidden_subprocess_kwargs(),
             )
             if completed.returncode == 0:
                 return candidate
@@ -168,7 +170,7 @@ def process(
         logger.warning(msg)
         try:
             report = _consistency_report(info.path, out)
-        except ffmpeg.Error as exc:
+        except RuntimeError as exc:
             raise RuntimeError(f"Consistency check failed for existing output '{out}': {exc}") from exc
 
         issues = report["issues"]
@@ -255,7 +257,16 @@ def process(
             .overwrite_output()
         )
     try:
-        proc = output_node.run_async(pipe_stdout=True, pipe_stderr=True, cmd=ffmpeg_cmd)
+        # Build the ffmpeg command line via ffmpeg-python, then launch it
+        # ourselves so we can pass Windows no-console flags that run_async()
+        # does not support.
+        cmd_args = ffmpeg.compile(output_node, cmd=ffmpeg_cmd, overwrite_output=True)
+        proc = subprocess.Popen(
+            cmd_args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            **_hidden_subprocess_kwargs(),
+        )
     except OSError as exc:
         raise RuntimeError(f"FFmpeg could not start for '{info.path}': {exc}") from exc
 
@@ -299,7 +310,7 @@ def process(
 
     try:
         report = _consistency_report(info.path, out)
-    except ffmpeg.Error as exc:
+    except RuntimeError as exc:
         raise RuntimeError(f"Consistency check failed for '{out}': {exc}") from exc
 
     issues = report["issues"]
