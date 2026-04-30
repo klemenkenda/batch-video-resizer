@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import shutil
 import subprocess
@@ -48,6 +49,17 @@ def _compute_new_resolution(
     return new_w, new_h, True
 
 
+def _bundled_ffmpeg_dir() -> str:
+    """Return the directory where bundled ffmpeg/ffprobe binaries are placed.
+
+    When running as a PyInstaller one-dir EXE the binaries live in an
+    ``ffmpeg`` sub-folder next to the executable.  During normal development
+    they may be placed under ``assets/ffmpeg`` in the project root.
+    """
+    exe_dir = os.path.dirname(os.path.abspath(sys.executable))
+    return os.path.join(exe_dir, "ffmpeg")
+
+
 def _resolve_ffprobe_cmd() -> str:
     """Return a working ffprobe command path, or plain 'ffprobe' as fallback."""
     candidates = []
@@ -56,6 +68,11 @@ def _resolve_ffprobe_cmd() -> str:
     env_cmd = os.environ.get("FFPROBE_PATH")
     if env_cmd:
         candidates.append(env_cmd)
+
+    # Bundled binary shipped alongside the installed EXE.
+    bundled = os.path.join(_bundled_ffmpeg_dir(), "ffprobe.exe")
+    if os.path.isfile(bundled):
+        candidates.append(bundled)
 
     path_cmd = shutil.which("ffprobe")
     if path_cmd:

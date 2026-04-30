@@ -29,9 +29,23 @@ jobs:
       - name: Generate icon
         run: python scripts/generate_icon.py
 
+      - name: Install FFmpeg
+        uses: AnimMouse/setup-ffmpeg@v1
+
       - name: Build EXE
         run: |
           pyinstaller --noconfirm --clean --windowed --name VideoResizerStudio --icon assets/app.ico --collect-all cv2 main.py
+
+      - name: Bundle ffmpeg binaries into dist
+        shell: pwsh
+        run: |
+          $binDir = "dist\VideoResizerStudio\ffmpeg"
+          New-Item -ItemType Directory -Force -Path $binDir | Out-Null
+          $ffmpeg = (Get-Command ffmpeg).Source
+          $ffprobe = (Get-Command ffprobe).Source
+          Copy-Item $ffmpeg $binDir
+          Copy-Item $ffprobe $binDir
+          Write-Host "Bundled ffmpeg from: $ffmpeg"
 
       - name: Build Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2

@@ -89,11 +89,17 @@ def _has_audio_stream(path: str) -> bool:
 
 def _resolve_ffmpeg_cmd() -> str:
     """Return a working ffmpeg command path, or plain 'ffmpeg' as fallback."""
+    from .estimator import _bundled_ffmpeg_dir
     candidates = []
 
     env_cmd = os.environ.get("FFMPEG_PATH")
     if env_cmd:
         candidates.append(env_cmd)
+
+    # Bundled binary shipped alongside the installed EXE.
+    bundled = os.path.join(_bundled_ffmpeg_dir(), "ffmpeg.exe")
+    if os.path.isfile(bundled):
+        candidates.append(bundled)
 
     path_cmd = shutil.which("ffmpeg")
     if path_cmd:

@@ -15,9 +15,9 @@ Runtime dependencies include FFmpeg tooling plus Python package `opencv-python` 
 
 ## Windows Download
 
-- Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.3
-- Windows installer (.exe): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.3/VideoResizerStudio-Setup-v1.0.3.exe
-- Portable build (.zip): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.3/VideoResizerStudio-v1.0.3-win64.zip
+- Release page: https://github.com/klemenkenda/batch-video-resizer/releases/tag/v1.0.4
+- Windows installer (.exe): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.4/VideoResizerStudio-Setup-v1.0.4.exe
+- Portable build (.zip): https://github.com/klemenkenda/batch-video-resizer/releases/download/v1.0.4/VideoResizerStudio-v1.0.4-win64.zip
 
 ## What This Project Does
 
